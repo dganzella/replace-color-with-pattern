@@ -5,16 +5,23 @@ const { Jimp } = require("jimp");
 const image = await Jimp.read('test.png');
 
 replaceColor({
-  jimpImage: image,
-  colors: {
-    type: 'hex',
-    targetColor: '#FF0000',
-    replaceColor: '#FFFFFF'
-  }
-}, (err, jimpObject) => {
-  if (err) return console.log(err)
-  jimpObject.write('./output.jpg', (err) => {
-    if (err) return console.log(err)
-  })
-})
+    jimpImage: image,
+    targetColor: {
+        type: 'hex',
+        color: '#FF797979',
+    },
+    replaceColors: [{
+        type: 'hex',
+        color: '#FFFFFFFF',
+    },{
+        type: 'hex',
+        color: '#FF000000',
+    }
+    ],
+        }, (err, jimpObject) => {
+        if (err) return console.log(err)
+        jimpObject.write('test-x2.png', (err) => {
+            if (err) return console.log(err)
+        })
+    })
 ```
