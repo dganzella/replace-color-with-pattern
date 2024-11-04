@@ -7,7 +7,8 @@ const validateColors = require('./utils/validate-colors')
 
 module.exports = ({
   image,
-  colors,
+  targetColor,
+  replaceColors,
   formula = 'E00',
   deltaE = 2.3
 } = {}, callback) => {
@@ -27,11 +28,6 @@ module.exports = ({
       return callback(new ReplaceColorError('PARAMETER_REQUIRED', 'options.image'))
     }
 
-    const colorsValidationError = validateColors(colors)
-    if (colorsValidationError) {
-      return callback(new ReplaceColorError(colorsValidationError.code, colorsValidationError.field))
-    }
-
     if (!(typeof formula === 'string' && ['E76', 'E94', 'E00'].includes(formula))) {
       return callback(new ReplaceColorError('PARAMETER_INVALID', 'options.formula'))
     }
@@ -42,8 +38,12 @@ module.exports = ({
 
     Jimp.read(image)
       .then((jimpObject) => {
-        const targetLABColor = convertColor(colors.type, 'lab', colors.targetColor)
-        const replaceRGBColor = convertColor(colors.type, 'rgb', colors.replaceColor)
+        const targetLABColor = convertColor(colors.type, 'lab', targetColor.color)
+        let replaceRGBColors = []
+          
+        replaceColors.forEach((repColor) => {
+            replaceRGBColors.push(convertColor(colors.type, 'rgb', repColor.color);
+        }
 
         jimpObject.scan(0, 0, jimpObject.bitmap.width, jimpObject.bitmap.height, (x, y, idx) => {
           const currentLABColor = convertColor('rgb', 'lab', [
@@ -52,11 +52,13 @@ module.exports = ({
             jimpObject.bitmap.data[idx + 2]
           ])
 
+          let index = (x+y)%replaceColors.length;
+
           if (getDelta(currentLABColor, targetLABColor, formula) <= deltaE) {
-            jimpObject.bitmap.data[idx] = replaceRGBColor[0]
-            jimpObject.bitmap.data[idx + 1] = replaceRGBColor[1]
-            jimpObject.bitmap.data[idx + 2] = replaceRGBColor[2]
-            if (replaceRGBColor[3] !== null) jimpObject.bitmap.data[idx + 3] = replaceRGBColor[3]
+            jimpObject.bitmap.data[idx] = replaceRGBColors[index][0]
+            jimpObject.bitmap.data[idx + 1] = replaceRGBColors[index][1]
+            jimpObject.bitmap.data[idx + 2] = replaceRGBColors[index][2]
+            if (replaceRGBColor[3] !== null) jimpObject.bitmap.data[idx + 3] = replaceRGBColors[index][3]
           }
         })
 
