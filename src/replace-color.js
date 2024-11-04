@@ -42,8 +42,8 @@ module.exports = ({
         let replaceRGBColors = []
           
         replaceColors.forEach((repColor) => {
-            replaceRGBColors.push(convertColor(colors.type, 'rgb', repColor.color);
-        }
+            replaceRGBColors.push(convertColor(colors.type, 'rgb', repColor.color))
+        })
 
         jimpObject.scan(0, 0, jimpObject.bitmap.width, jimpObject.bitmap.height, (x, y, idx) => {
           const currentLABColor = convertColor('rgb', 'lab', [
